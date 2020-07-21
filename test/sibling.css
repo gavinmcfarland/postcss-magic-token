@@ -1,0 +1,4 @@
+.class {
+	width: 400px;
+	height: ref(width);
+}

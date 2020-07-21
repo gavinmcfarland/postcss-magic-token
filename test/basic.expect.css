@@ -1,0 +1,3 @@
+.basic {
+	color: var(--color-primary, var(--primary));
+}
