@@ -132,8 +132,10 @@ function replaceRef(value, ref) {
 
 			for (let [key, value] of Object.entries(ref.parts)) {
 
+
 				if (key === 'property') {
 					if (variant != '') {
+
 						array.push(variant)
 					}
 				}
@@ -162,6 +164,7 @@ function replaceRef(value, ref) {
 
 			array2.reverse()
 
+			console.log(array2)
 
 			let string = ''
 			for (let i = 0, len = array2.length; i < len; i++) {

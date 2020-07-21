@@ -3,10 +3,10 @@ module.exports = {
 		{
 			property: ['padding', 'margin'],
 			children: [
-				['top', 'inline'],
-				['right', 'block'],
-				['bottom', 'inline'],
-				['left', 'block']
+				['top', 'block'],
+				['right', 'inline'],
+				['bottom', 'block'],
+				['left', 'inline']
 			]
 		}
 	]

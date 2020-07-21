@@ -6,9 +6,36 @@
 
 [PostCSS Magic Token] references design tokens intelligently based on the current property and selector rules.
 
-> This plugin is in experimentation at the moment.
+> This plugin is still in experimentation.
 
-__Current property__
+Token lookup happens in the following order. When a specific token is not available, it checks for the next available token.
+
+```
+component
+  -> element
+    -> property
+      -> variant
+        -> value
+```
+
+### Default values
+
+```css
+.example {
+  border: tok();
+}
+```
+
+Becomes
+
+```css
+/* e.g. --border: 1px solid red; */
+.example {
+  border: var(--border);
+}
+```
+
+### Current property
 
 ```css
 .example {
@@ -16,15 +43,35 @@ __Current property__
 }
 ```
 
-Will become
+Becomes
 
 ```css
+/* e.g. --color-primary: red; */
 .example {
   color: var(--color-primary);
 }
 ```
 
-__Component specific__
+### Element specific
+
+```css
+h2 {
+  font-size: tok();
+}
+```
+
+Becomes
+
+```css
+/* e.g. --h2-font-size: 2.5em; */
+h2 {
+  font-size: var(--h2-font-size, var(--font-size));
+}
+```
+
+### Component specific
+
+Indicate a component using either of the following formats `.Component`, `Component`, `com-ponent`.
 
 ```css
 .Component {
@@ -32,15 +79,18 @@ __Component specific__
 }
 ```
 
-Will become
+Becomes
 
 ```css
+/* e.g. --component-color-primary: purple; */
 .Component {
-  color: var(--component-color-primary, --color-primary);
+  color: var(--component-color-primary, var(--color-primary));
 }
 ```
 
-__Property specific__
+###  Property variants
+
+Some properties can include variants. For example margin and padding include variants for inline and block spacing.
 
 ```css
 .example {
@@ -48,12 +98,18 @@ __Property specific__
 }
 ```
 
+Becomes
+
 ```css
-.example {
-  padding: var(--padding-inline-small, var(--padding-small)) var(--padding-block-small, var(--padding-small));
+/* e.g. --padding-block-small: 1em;
+        --padding-inline-small: 0.5em; */
+.padding {
+  padding: var(--padding-block-small, var(--padding-small))
+    var(--padding-inline-small, var(--padding-small))
+    var(--padding-block-small, var(--padding-small))
+    var(--padding-inline-small, var(--padding-small));
 }
 ```
-
 
 
 ## Usage
@@ -67,30 +123,21 @@ npm install postcss-magic-token --save-dev
 Use **PostCSS Magic Token** to process your CSS:
 
 ```js
-const postcssDesignToken = require('postcss-magic-token');
+const postcssMagicToken = require('postcss-magic-token');
 
-postcssDesignToken.process(YOUR_CSS /*, processOptions, pluginOptions */);
+postcssMagicToken.process(YOUR_CSS /*, processOptions, pluginOptions */);
 ```
 
 Or use it as a [PostCSS] plugin:
 
 ```js
 const postcss = require('postcss');
-const postcssDesignToken = require('postcss-magic-token');
+const postcssMagicToken = require('postcss-magic-token');
 
 postcss([
-  postcssDesignToken(/* pluginOptions */)
+  postcssMagicToken(/* pluginOptions */)
 ]).process(YOUR_CSS /*, processOptions */);
 ```
-
-**PostCSS Magic Token** runs in all Node environments, with special instructions for:
-
-| [Node](INSTALL.md#node) | [PostCSS CLI](INSTALL.md#postcss-cli) | [Webpack](INSTALL.md#webpack) | [Create React App](INSTALL.md#create-react-app) | [Gulp](INSTALL.md#gulp) | [Grunt](INSTALL.md#grunt) |
-| --- | --- | --- | --- | --- | --- |
-
-## Options
-
-...
 
 [cli-img]: https://img.shields.io/travis/limitlessloop/postcss-magic-token/master.svg
 [cli-url]: https://travis-ci.org/limitlessloop/postcss-magic-token
