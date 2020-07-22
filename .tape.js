@@ -5,6 +5,9 @@ module.exports = {
 	'complex': {
 		message: 'supports complex usage'
 	},
+	'component': {
+		message: 'supports component usage'
+	},
 	'property': {
 		message: 'supports property specific usage'
 	},

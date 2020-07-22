@@ -4,7 +4,8 @@ import fs from 'fs-extra'
 const regex = {
 	ref: /\b(?:ref|tok)\(([^()]*)\)/g,
 	component: /\.?([A-Z]\w+)|(?=\S*['-])([\w-]+)/g,
-	element: /(?<![:.])\b(\w+)\b/g
+	element: /(?<![:.])\b(\w+)\b/g,
+	placeholder: /\{\{([^{}]*)\}\}/g
 
 }
 
@@ -18,39 +19,37 @@ function getConfig(path) {
 	return config
 }
 
+function replaceLookups(lookups, variant) {
+	return lookups.map((value) => {
+		return value.map((item) => {
+			return item.replace(regex.placeholder, variant)
+		})
+	})
+}
+
 function getRef(rule) {
 	let tokens = getConfig('config.js').tokens
 
 	let ref = {
-		parts: {
-			args: '',
-			property: '',
-			element: '',
-			components: []
-		},
+		args: '',
+		property: '',
+		element: '',
+		components: [],
 		outputs: [],
 		position: '',
-		length: ''
+		length: '',
+		lookups: []
 	}
 
 	let reversedString = rule.selector.split(' ').reverse().join(' ')
 
-	/* Push component to array */
 	reversedString.replace(regex.component, (match, p1) => {
-		ref.parts.components.push(p1.toLowerCase())
+		ref.components.push(p1.toLowerCase())
 	})
-
-	// if (ref.components)
-
-	if (ref.parts.components) {
-
-		ref.parts.components.reverse()
-
-	}
 
 
 	rule.walkDecls(decl => {
-		ref.parts.property = decl.prop
+		ref.property = decl.prop
 
 		let values = decl.value.split(' ')
 
@@ -61,20 +60,20 @@ function getRef(rule) {
 			let value = values[i]
 
 			value.replace(regex.ref, (match, p1) => {
-				if (p1) ref.parts.args = p1
+				if (p1) ref.args = p1
 			})
 		}
 
 	})
 
-	/* Add element if element present */
 	reversedString.replace(regex.element, (match, p1) => {
-		ref.parts.element = p1
+		ref.element = p1
 	})
 
+	// TODO: Needs refactoring so that logic is stored in config
 	for (let token of tokens) {
 		for (let property of token.property) {
-			if (ref.parts.property === property) {
+			if (ref.property === property) {
 
 				if (ref.length === 1) {
 					ref.outputs.push(token.children[0][1]);
@@ -115,74 +114,78 @@ function getRef(rule) {
 		ref.outputs = ['']
 	}
 
+	if (ref.property) {
+		ref.lookups.push([ref.property])
+	}
+
+	if (ref.property && ref.args) {
+		ref.lookups.push([ref.property, ref.args])
+	}
+
+	if (ref.property && ref.args && ref.outputs.length > 1) {
+		ref.lookups.push([ref.property, '{{variant}}', ref.args])
+	}
+
+	if (ref.element && ref.property) {
+		ref.lookups.push([ref.element, ref.property])
+	}
+
+	if (ref.element && ref.property && ref.args) {
+		ref.lookups.push([ref.element, ref.property, ref.args])
+	}
+
+	if (ref.components) {
+		let thing = [];
+		for (let component of ref.components) {
+			thing.push(component)
+
+			// if (ref.property) {
+			// 	ref.lookups.push([...thing, ref.property])
+			// }
+
+			if (ref.property && ref.args) {
+				ref.lookups.push([...thing, ref.property, ref.args])
+			}
+
+			// if (ref.element && ref.property) {
+			// 	ref.lookups.push([...thing, ref.element, ref.property])
+			// }
+
+			if (ref.element && ref.property && ref.args) {
+				ref.lookups.push([...thing, ref.element, ref.property, ref.args])
+			}
+
+
+		}
+
+	}
+
+
 	return ref
 }
 
 function replaceRef(value, ref) {
 
 	return value.replace(regex.ref, () => {
-
-		let newValue = []
-
+		let newValue = [];
 		for (let variant of ref.outputs) {
 
+			let string = '';
 
-			let array = []
-			let array2 = []
+			let newLookups = replaceLookups(ref.lookups, variant)
 
-			for (let [key, value] of Object.entries(ref.parts)) {
+			for (let i = 0, len = newLookups.length; i < len; i++) {
 
-
-				if (key === 'property') {
-					if (variant != '') {
-
-						array.push(variant)
-					}
-				}
-
-				if (Array.isArray(value)) {
-					if (value != '') {
-						array.push(...value.reverse())
-					}
-				}
-				else {
-					if (value != '') {
-						array.push(value)
-					}
-
-				}
-			}
-
-			array.reverse()
-
-
-			for (let i = 0, len = array.length; i < len; i++) {
-				array2.push(array.join('-'))
-				array.shift()
-			}
-
-
-			array2.reverse()
-
-			console.log(array2)
-
-			let string = ''
-			for (let i = 0, len = array2.length; i < len; i++) {
 				if (i < 1) {
-					string = `var(--${array2[i]})`
+					string = `var(--${newLookups[i].join('-')})`
 				}
 				else {
-					string = `var(--${array2[i]}, ${string})`
+					string = `var(--${newLookups[i].join('-')}, ${string})`
 				}
-
 			}
-
 			newValue.push(string)
 		}
-
-
-		return newValue.join(' ')
-
+		return newValue.join(' ');
 	})
 }
 
@@ -199,6 +202,7 @@ export default postcss.plugin('postcss-design-token', opts => {
 			rule.walkDecls(decl => {
 
 				decl.value = replaceRef(decl.value, ref)
+
 			})
 		})
 	};
