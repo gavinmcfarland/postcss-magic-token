@@ -34,7 +34,6 @@
     "@babel/preset-env": "^7.7.1",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.6.0",
-    "fs": "0.0.1-security",
     "fs-extra": "^9.0.1",
     "postcss-tape": "^5.0.2",
     "pre-commit": "^1.2.2",
