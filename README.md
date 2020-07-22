@@ -4,7 +4,7 @@
 [![Build Status][cli-img]][cli-url]
 [![Support Chat][git-img]][git-url]
 
-A special function for referencing design tokens intelligently based on the current property and the current selector.
+A special function for referencing design tokens and CSS variables intelligently based on the current property and the current selector.
 
 > This plugin is still in experimentation.
 
