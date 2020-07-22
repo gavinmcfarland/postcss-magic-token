@@ -1,12 +1,10 @@
-# PostCSS Ref Function [<img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS" width="90" height="90" align="right">][postcss]
+# PostCSS Magic Token [<img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS" width="90" height="90" align="right">][postcss]
 
 [![NPM Version][npm-img]][npm-url]
 [![Build Status][cli-img]][cli-url]
 [![Support Chat][git-img]][git-url]
 
-A special function for referencing design tokens and CSS variables intelligently based on the current property and the current selector.
-
-> This plugin is still in experimentation.
+A `tok()` function for referencing design tokens and CSS variables intelligently based on the current property and the current selector.
 
 ## Usage
 
@@ -14,7 +12,7 @@ To reference the primary color for all `h2` elements you would write.
 
 ```css
 h2 {
-  color: ref(--primary);
+  color: tok(--primary);
 }
 ```
 
@@ -50,7 +48,7 @@ When a specific variant of a token is not available, it checks for the next avai
 
 ```css
 .example {
-  border: ref();
+  border: tok();
 }
 ```
 
@@ -67,7 +65,7 @@ Becomes
 
 ```css
 .example {
-  color: ref(--primary);
+  color: tok(--primary);
 }
 ```
 
@@ -84,7 +82,7 @@ Becomes
 
 ```css
 h2 {
-  font-size: ref();
+  font-size: tok();
 }
 ```
 
@@ -103,7 +101,7 @@ Indicate a component using either of the following formats `.Component`, `Compon
 
 ```css
 .Component {
-  color: ref(--primary);
+  color: tok(--primary);
 }
 ```
 
@@ -123,7 +121,7 @@ Some properties can include variants. For example margin and padding include var
 
 ```css
 .example {
-  padding: ref(--small);
+  padding: tok(--small);
 }
 ```
 
@@ -144,37 +142,37 @@ Becomes
 
 ## Usage
 
-Add [PostCSS Ref Function] to your project:
+Add [PostCSS Magic Token] to your project:
 
 ```bash
-npm install postcss-ref-function --save-dev
+npm install postcss-magic-token --save-dev
 ```
 
-Use **PostCSS Ref Function** to process your CSS:
+Use **PostCSS Magic Token** to process your CSS:
 
 ```js
-const postcssRefFunction = require('postcss-ref-function');
+const postcssMagicToken = require('postcss-magic-token');
 
-postcssRefFunction.process(YOUR_CSS /*, processOptions, pluginOptions */);
+postcssMagicToken.process(YOUR_CSS /*, processOptions, pluginOptions */);
 ```
 
 Or use it as a [PostCSS] plugin:
 
 ```js
 const postcss = require('postcss');
-const postcssRefFunction = require('postcss-ref-function');
+const postcssMagicToken = require('postcss-magic-token');
 
 postcss([
-  postcssRefFunction(/* pluginOptions */)
+  postcssMagicToken(/* pluginOptions */)
 ]).process(YOUR_CSS /*, processOptions */);
 ```
 
-[cli-img]: https://img.shields.io/travis/limitlessloop/postcss-ref-function/master.svg
-[cli-url]: https://travis-ci.org/limitlessloop/postcss-ref-function
+[cli-img]: https://img.shields.io/travis/limitlessloop/postcss-magic-token/master.svg
+[cli-url]: https://travis-ci.org/limitlessloop/postcss-magic-token
 [git-img]: https://img.shields.io/badge/support-chat-blue.svg
 [git-url]: https://gitter.im/postcss/postcss
-[npm-img]: https://img.shields.io/npm/v/postcss-ref-function.svg
-[npm-url]: https://www.npmjs.com/package/postcss-ref-function
+[npm-img]: https://img.shields.io/npm/v/postcss-magic-token.svg
+[npm-url]: https://www.npmjs.com/package/postcss-magic-token
 
 [PostCSS]: https://github.com/postcss/postcss
-[PostCSS Ref Function]: https://github.com/limitlessloop/postcss-ref-function
+[PostCSS Magic Token]: https://github.com/limitlessloop/postcss-magic-token

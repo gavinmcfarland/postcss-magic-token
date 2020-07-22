@@ -2,7 +2,7 @@ import postcss from 'postcss';
 import fs from 'fs-extra'
 
 const regex = {
-	ref: /\b(?:ref\(|tok\()([^()]*)\)/g,
+	ref: /\b(?:tok)\(([^()]*)\)/g,
 	component: /\.?([A-Z]\w+)|(?=\S*['-])([\w-]+)/g,
 	element: /(?<![:.])\b(\w+)\b/g,
 	placeholder: /\{\{([^{}]*)\}\}/g
