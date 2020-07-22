@@ -63,7 +63,7 @@ Becomes
 }
 ```
 
-### Current property
+### Keyword values
 
 ```css
 .example {
