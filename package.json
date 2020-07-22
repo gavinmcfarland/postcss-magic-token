@@ -1,12 +1,12 @@
 {
-  "name": "postcss-ref-function",
+  "name": "postcss-magic-token",
   "version": "1.0.0-alpha.0",
   "description": "References design tokens in CSS intelligently based on the current property and selector rules",
   "author": "limitlessloop <5551+limitlessloop@users.noreply.github.com>",
   "license": "CC0-1.0",
-  "repository": "limitlessloop/postcss-ref-function",
-  "homepage": "https://github.com/limitlessloop/postcss-ref-function#readme",
-  "bugs": "https://github.com/limitlessloop/postcss-ref-function/issues",
+  "repository": "limitlessloop/postcss-magic-token",
+  "homepage": "https://github.com/limitlessloop/postcss-magic-token#readme",
+  "bugs": "https://github.com/limitlessloop/postcss-magic-token/issues",
   "main": "index.js",
   "module": "index.mjs",
   "files": [
