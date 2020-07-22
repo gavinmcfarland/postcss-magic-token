@@ -2,7 +2,7 @@ import postcss from 'postcss';
 import fs from 'fs-extra'
 
 const regex = {
-	ref: /\b(?:ref|tok)\(([^()]*)\)/g,
+	ref: /\b(?:ref\(|tok\()([^()]*)\)/g,
 	component: /\.?([A-Z]\w+)|(?=\S*['-])([\w-]+)/g,
 	element: /(?<![:.])\b(\w+)\b/g,
 	placeholder: /\{\{([^{}]*)\}\}/g
@@ -60,7 +60,7 @@ function getRef(rule) {
 			let value = values[i]
 
 			value.replace(regex.ref, (match, p1) => {
-				if (p1) ref.args = p1
+				if (p1) ref.args = p1.replace('--', '')
 			})
 		}
 
