@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-// import fs from 'fs-extra'
+import fs from 'fs-extra'
 
 const regex = {
 	ref: /\b(?:tok)\(([^()]*)\)/g,
@@ -9,15 +9,15 @@ const regex = {
 
 }
 
-// function getConfig(path) {
-// 	var config;
+function getConfig(path) {
+	var config;
 
-// 	if (fs.existsSync(process.cwd() + '/' + path)) {
-// 		config = require(process.cwd() + '/' + path)
-// 	}
+	if (fs.existsSync(process.cwd() + '/' + path)) {
+		config = require(process.cwd() + '/' + path)
+	}
 
-// 	return config
-// }
+	return config
+}
 
 function getAttrs(rule, decl) {
 	// let rules = getConfig('config.js').token
@@ -146,6 +146,8 @@ function createString(vars) {
 
 function replaceRef(rule, decl) {
 
+	let rules = getConfig('config.js').rules
+
 
 	var values = postcss.list.space(decl.value);
 
@@ -173,16 +175,28 @@ function replaceRef(rule, decl) {
 			let ref = getRef(rule, decl)
 			let vars = genVars(ref.attrs)
 
-			if (ref.attrs.property === 'padding' || ref.attrs.property === 'margin') {
+			for (let rule of rules) {
+				for (let property of rule.property) {
+					if (property instanceof RegExp) {
+						if (property.test(ref.attrs.property)) {
+							// let match = property.exec(ref.attrs.property)
 
-				let children = [
-					['top', 'block'],
-					['right', 'inline'],
-					['bottom', 'block'],
-					['left', 'inline']
-				]
+							let before = function (type, value) {
+								vars.get(type).push(value)
+							}
 
-				vars.get('property').push([ref.attrs.property, children[i][1], ...ref.attrs.keywords])
+							rule.result({ req: ref.attrs, i, before })
+						}
+					}
+					else {
+						if (property === ref.attrs.property) {
+
+							rule.result()
+
+						}
+					}
+
+				}
 			}
 
 			return createString(vars)
