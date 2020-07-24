@@ -1,3 +1,4 @@
 .Container .Button h2 {
+	padding: tok(--small);
 	color: tok(--primary);
 }
