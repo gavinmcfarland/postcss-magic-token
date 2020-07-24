@@ -150,7 +150,7 @@ function replaceRef(rule, decl) {
 	var values = postcss.list.space(decl.value);
 
 
-	if (decl.prop === 'padding') {
+	if (decl.prop === 'padding' || decl.prop === 'margin') {
 
 		if (values.length === 1) {
 			values.push(values[0]);
@@ -173,7 +173,7 @@ function replaceRef(rule, decl) {
 			let ref = getRef(rule, decl)
 			let vars = genVars(ref.attrs)
 
-			if (ref.attrs.property === 'padding') {
+			if (ref.attrs.property === 'padding' || ref.attrs.property === 'margin') {
 
 				let children = [
 					['top', 'block'],
