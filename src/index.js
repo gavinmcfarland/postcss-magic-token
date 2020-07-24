@@ -1,6 +1,23 @@
 import postcss from 'postcss';
 import fs from 'fs-extra'
 
+// let vars = new Map;
+
+// vars.set('property', [
+// 	['property'],
+// 	['property', 'keyword']
+// ])
+
+// vars.set('element', [
+// 	['element', 'property', 'keyword']
+// ])
+
+// for (let [key, value] of vars) {
+// 	console.log(key, value);
+// }
+
+// console.log(vars.get('property'))
+
 const regex = {
 	ref: /\b(?:tok)\(([^()]*)\)/g,
 	component: /\.?([A-Z]\w+)|(?=\S*['-])([\w-]+)/g,
@@ -27,177 +44,155 @@ function replaceLookups(lookups, variant) {
 	})
 }
 
-function getRef(rule) {
-	let tokens = getConfig('config.js').tokens
+function getAttrs(rule) {
+	// let rules = getConfig('config.js').token
 
-	let ref = {
-		args: '',
-		property: '',
-		element: '',
-		components: [],
-		outputs: [],
-		position: '',
-		length: '',
-		lookups: []
-	}
+	let attrs = {}
 
-	let reversedString = rule.selector.split(' ').reverse().join(' ')
-
-	reversedString.replace(regex.component, (match, p1) => {
-		ref.components.push(p1.toLowerCase())
+	// Get components from selector
+	attrs.components = []
+	rule.selector.split(' ').reverse().join(' ').replace(regex.component, (match, p1) => {
+		attrs.components.push(p1.toLowerCase())
 	})
 
-
 	rule.walkDecls(decl => {
-		ref.property = decl.prop
 
 		let values = decl.value.split(' ')
 
-		ref.length = values.length;
+		// Get property from decl
+		attrs.property = decl.prop
+
+		// Get position of value in declaration
 
 		for (let i = 0, len = values.length; i < len; i++) {
-			ref.position = i
-			let value = values[i]
 
-			value.replace(regex.ref, (match, p1) => {
-				if (p1) ref.args = p1.replace('--', '')
+			let array = []
+
+			// Get keywords from ref function
+			values[i].replace(regex.ref, (match, p1) => {
+				if (p1) array.push(p1.replace('--', ''))
 			})
+
+			if (array) attrs.keywords = array
 		}
 
 	})
 
-	reversedString.replace(regex.element, (match, p1) => {
-		ref.element = p1
+	// Get element from selector
+	rule.selector.split(' ').reverse().join(' ').replace(regex.element, (match, p1) => {
+		attrs.element = p1
 	})
 
-	// TODO: Needs refactoring so that logic is stored in config
-	for (let token of tokens) {
-		for (let property of token.property) {
-			if (ref.property === property) {
+	return attrs
+}
 
-				if (ref.length === 1) {
-					ref.outputs.push(token.children[0][1]);
-					ref.outputs.push(token.children[1][1]);
-					ref.outputs.push(token.children[2][1]);
-					ref.outputs.push(token.children[3][1]);
-				}
+function genVars(attrs) {
 
-				if (ref.length === 2) {
-					if (ref.position === 0) {
-						ref.outputs.push(token.children[0][1]);
-						ref.outputs.push(token.children[2][1]);
-					}
-					if (ref.position === 1) {
-						ref.outputs.push(token.children[1][1]);
-						ref.outputs.push(token.children[3][1]);
-					}
-				}
+	let vars = new Map;
 
-				if (ref.length === 3) {
-					if (ref.position === 0) {
-						ref.outputs.push(token.children[0][1]);
-					}
-					if (ref.position === 1) {
-						ref.outputs.push(token.children[1][1]);
-						ref.outputs.push(token.children[3][1]);
-					}
-					if (ref.position === 2) {
-						ref.outputs.push(token.children[2][1]);
-					}
-				}
-			}
+	vars.set('property', [])
+	vars.set('element', [])
+	vars.set('component', [])
 
+
+	if (attrs.property) {
+		vars.get('property').push([attrs.property])
+
+		if (attrs.keywords) vars.get('property').push([attrs.property, ...attrs.keywords])
+
+		if (attrs.element) {
+
+			if (attrs.keywords) vars.get('element').push([attrs.element, attrs.property, ...attrs.keywords])
 		}
-	}
 
-	if (ref.outputs.length === 0) {
-		ref.outputs = ['']
-	}
+		if (attrs.components) {
 
-	if (ref.property) {
-		ref.lookups.push([ref.property])
-	}
+			let components = [];
+			for (let component of attrs.components) {
 
-	if (ref.property && ref.args) {
-		ref.lookups.push([ref.property, ref.args])
-	}
+				components.push(component)
 
-	if (ref.property && ref.args && ref.outputs.length > 1) {
-		ref.lookups.push([ref.property, '{{variant}}', ref.args])
-	}
+				vars.get('component').push([...components, attrs.property])
 
-	if (ref.element && ref.property) {
-		ref.lookups.push([ref.element, ref.property])
-	}
-
-	if (ref.element && ref.property && ref.args) {
-		ref.lookups.push([ref.element, ref.property, ref.args])
-	}
-
-	if (ref.components) {
-		let thing = [];
-		for (let component of ref.components) {
-			thing.push(component)
-
-			// if (ref.property) {
-			// 	ref.lookups.push([...thing, ref.property])
-			// }
-
-			if (ref.property && ref.args) {
-				ref.lookups.push([...thing, ref.property, ref.args])
+				if (attrs.element) {
+					if (attrs.keywords) vars.get('component').push([...components, attrs.element, attrs.property, ...attrs.keywords])
+				}
 			}
-
-			// if (ref.element && ref.property) {
-			// 	ref.lookups.push([...thing, ref.element, ref.property])
-			// }
-
-			if (ref.element && ref.property && ref.args) {
-				ref.lookups.push([...thing, ref.element, ref.property, ref.args])
-			}
-
 
 		}
 
 	}
 
+	return [...vars.get('property'), ...vars.get('element'), ...vars.get('component')]
+}
+
+function getRef(rule) {
+
+	let attrs = getAttrs(rule)
+
+	let ref = {
+		attrs
+	}
 
 	return ref
+}
+
+function createString(vars) {
+
+
+	let string = '';
+
+
+	for (let i = 0, len = vars.length; i < len; i++) {
+
+		if (i < 1) {
+			string = `var(--${vars[i].join('-')})`
+		}
+		else {
+			string = `var(--${vars[i].join('-')}, ${string})`
+		}
+	}
+
+	return string
+
 }
 
 function replaceRef(value, ref) {
 
 	return value.replace(regex.ref, () => {
-		let newValue = [];
-		for (let variant of ref.outputs) {
 
-			let string = '';
+		let children = [
+			['top', 'block'],
+			['right', 'inline'],
+			['bottom', 'block'],
+			['left', 'inline']
+		]
 
-			let newLookups = replaceLookups(ref.lookups, variant)
+		let array = []
 
-			for (let i = 0, len = newLookups.length; i < len; i++) {
+		for (let child in children) {
 
-				if (i < 1) {
-					string = `var(--${newLookups[i].join('-')})`
-				}
-				else {
-					string = `var(--${newLookups[i].join('-')}, ${string})`
-				}
-			}
-			newValue.push(string)
+			let vars = genVars(ref.attrs)
+
+			array.push(createString(vars))
 		}
-		return newValue.join(' ');
+
+		return array.join(' ')
+
 	})
 }
 
 
 export default postcss.plugin('postcss-design-token', opts => {
-	console.log({ opts }); // eslint-disable-line no-console
+	// console.log({ opts }); // eslint-disable-line no-console
 
 	return (root) => {
 
 		root.walkRules(rule => {
 
 			let ref = getRef(rule)
+
+			// console.log(ref)
 
 			rule.walkDecls(decl => {
 
