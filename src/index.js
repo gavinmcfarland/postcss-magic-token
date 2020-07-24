@@ -185,7 +185,11 @@ function replaceRef(rule, decl) {
 								vars.get(type).push(value)
 							}
 
-							rule.result({ req: ref.attrs, i, before })
+							let after = function (type, value) {
+								vars.get(type).unshift(value)
+							}
+
+							rule.result({ req: ref.attrs, i, before, after })
 						}
 					}
 					else {
