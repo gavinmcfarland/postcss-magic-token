@@ -1,6 +1,6 @@
 {
   "name": "postcss-magic-token",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "References design tokens in CSS intelligently based on the current property and selector rules",
   "author": "limitlessloop <5551+limitlessloop@users.noreply.github.com>",
   "license": "CC0-1.0",
