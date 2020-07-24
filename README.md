@@ -30,14 +30,11 @@ When a specific variant of a token is not available, it checks for the next avai
 
 ```css
 :root {
-  --component-element-property-arg: value;
-  --component-element-property: value;
-  --component-property-arg: value;
-  --component-property: value;
-  --element-property-arg: value;
-  --element-property: value;
-  --property-variant-arg: value;
-  --property-arg: value;
+  --component-element-property-keyword: value;
+  --component-property-keyword: value;
+  --element-property-keyword: value;
+  --property-variant-keyword: value;
+  --property-keyword: value;
   --property: value;
 }
 ```
@@ -47,7 +44,7 @@ When a specific variant of a token is not available, it checks for the next avai
 ### Default values
 
 ```css
-.example {
+.default {
   border: tok();
 }
 ```
@@ -56,7 +53,7 @@ Becomes
 
 ```css
 /* e.g. --border: 1px solid red; */
-.example {
+.default {
   border: var(--border);
 }
 ```
@@ -64,7 +61,7 @@ Becomes
 ### Keyword values
 
 ```css
-.example {
+.keyword {
   color: tok(--primary);
 }
 ```
@@ -72,8 +69,9 @@ Becomes
 Becomes
 
 ```css
-/* e.g. --color-primary: red; */
-.example {
+/* e.g. --color-primary: red;
+        --color: black; */
+.keyword {
   color: var(--color-primary, var(--color));
 }
 ```
@@ -89,7 +87,8 @@ h2 {
 Becomes
 
 ```css
-/* e.g. --h2-font-size: 2.5em; */
+/* e.g. --h2-font-size: 2.5em;
+        --font-size: 1em; */
 h2 {
   font-size: var(--h2-font-size, var(--font-size));
 }
@@ -109,7 +108,8 @@ Becomes
 
 ```css
 /* e.g. --component-color-primary: purple;
-        --color-primary: purple; */
+        --color-primary: blue;
+        --color: black; */
 .Component {
   color: var(--component-color-primary, var(--color-primary, var(--color)));
 }
@@ -120,7 +120,7 @@ Becomes
 Some properties can include variants. For example margin and padding include variants for inline and block spacing.
 
 ```css
-.example {
+.variants {
   padding: tok(--small);
 }
 ```
@@ -131,7 +131,7 @@ Becomes
 /* e.g. --padding-block-small: 1em;
         --padding-inline-small: 0.5em;
         --padding-small: 1em; */
-.padding {
+.variants  {
   padding: var(--padding-block-small, var(--padding-small, var(--padding)))
     var(--padding-inline-small, var(--padding-small, var(--padding)))
     var(--padding-block-small, var(--padding-small, var(--padding)))
