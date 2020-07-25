@@ -1,3 +1,3 @@
 h1 {
-	font-size: var(--h1-font-size, var(--font-size));
+	font-size: var(--h1-font-size, var(--heading-font-size, var(--font-size)));
 }

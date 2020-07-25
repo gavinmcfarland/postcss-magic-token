@@ -175,32 +175,43 @@ function replaceRef(rule, decl) {
 			let ref = getRef(rule, decl)
 			let vars = genVars(ref.attrs)
 
+			let before = function (type, value) {
+				vars.get(type).push(value)
+			}
+
+			let after = function (type, value) {
+				vars.get(type).unshift(value)
+			}
+
 			for (let rule of rules) {
-				for (let property of rule.property) {
-					if (property instanceof RegExp) {
-						if (property.test(ref.attrs.property)) {
-							let match = property.exec(decl.prop)
+				if (rule.property) {
+					if (!Array.isArray(rule.property)) {
+						rule.property = [rule.property]
+					}
+					for (let property of rule.property) {
+						if (property instanceof RegExp) {
+							if (property.test(ref.attrs.property)) {
+								let match = property.exec(decl.prop)
 
-							let before = function (type, value) {
-								vars.get(type).push(value)
+
+
+								rule.result({ selector: ref.attrs, property: decl.prop, match, keywords: ref.attrs.keywords, i, before, after })
 							}
+						}
+						else {
+							if (property === ref.attrs.property) {
 
-							let after = function (type, value) {
-								vars.get(type).unshift(value)
+								rule.result({ selector: ref.attrs, property: decl.prop, keywords: ref.attrs.keywords, i, before, after })
+
 							}
-
-							rule.result({ selector: ref.attrs, property: decl.prop, match, keywords: ref.attrs.keywords, i, before, after })
 						}
 					}
-					else {
-						if (property === ref.attrs.property) {
-
-							rule.result()
-
-						}
-					}
-
 				}
+				else {
+					rule.result({ selector: ref.attrs, property: decl.prop, keywords: ref.attrs.keywords, i, before, after })
+				}
+
+
 			}
 
 			return createString(vars)
