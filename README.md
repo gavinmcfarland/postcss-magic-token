@@ -20,11 +20,11 @@ This equals the same as writing...
 
 ```css
 h2 {
-    color: var(--h2-color-primary, var(--color-primary, var(--color)));
+    color: var(--h2-color-primary, var(--heading-color-primary, var(--color-primary, var(--color))));
 }
 ```
 
-In this example, first it looks for a token called `--h2-color-primary`, if this is not available it then looks to see if there is a `--color-primary`, and then finally as a fallback `--color`.
+In this example, first it looks for a token called `--h2-color-primary`, if this is not available it then looks to see if there is a token for `--heading-color-primary` then `--color-primary`, and then finally as a fallback `--color`.
 
 When a specific variant of a token is not available, it checks for the next available variant. Below are some examples (some variations have been removed for simplicity).
 
