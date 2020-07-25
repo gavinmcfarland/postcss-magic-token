@@ -1,16 +1,25 @@
 module.exports = {
 	rules: [
 		{
-			property: [/(padding|margin)(?:-(\w+))?/],
-			result: ({ req, i, before }) => {
-				let children = [
+			property: [/(?<property>padding|margin)(?:-(?<side>\w+))?/],
+			result: ({ selector, match, property, keywords, i, before }) => {
+
+				let sides = [
 					['top', 'block'],
 					['right', 'inline'],
 					['bottom', 'block'],
 					['left', 'inline']
 				]
 
-				before('property', [req.property, children[i][1], ...req.keywords])
+				let n = 0
+				for (let side of sides) {
+					if (match.groups.side === side[0]) {
+						i = n
+					}
+					n++
+				}
+
+				before('property', [match.groups.property, sides[i][1], ...keywords])
 
 				// console.log(`I'm a padding, margin rule`)
 			}

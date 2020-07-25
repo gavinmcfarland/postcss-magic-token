@@ -179,7 +179,7 @@ function replaceRef(rule, decl) {
 				for (let property of rule.property) {
 					if (property instanceof RegExp) {
 						if (property.test(ref.attrs.property)) {
-							// let match = property.exec(ref.attrs.property)
+							let match = property.exec(decl.prop)
 
 							let before = function (type, value) {
 								vars.get(type).push(value)
@@ -189,7 +189,7 @@ function replaceRef(rule, decl) {
 								vars.get(type).unshift(value)
 							}
 
-							rule.result({ req: ref.attrs, i, before, after })
+							rule.result({ selector: ref.attrs, property: decl.prop, match, keywords: ref.attrs.keywords, i, before, after })
 						}
 					}
 					else {
