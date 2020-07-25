@@ -79,7 +79,7 @@ Becomes
 ### Element specific
 
 ```css
-h2 {
+button {
     font-size: tok();
 }
 ```
@@ -87,10 +87,10 @@ h2 {
 Becomes
 
 ```css
-/* e.g. --h2-font-size: 2.5em;
+/* e.g. --button-font-size: 2.5em;
         --font-size: 1em; */
-h2 {
-    font-size: var(--h2-font-size, var(--font-size));
+button {
+    font-size: var(--button-font-size, var(--font-size));
 }
 ```
 
