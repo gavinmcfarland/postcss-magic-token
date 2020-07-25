@@ -13,5 +13,5 @@ trim_trailing_whitespace = true
 trim_trailing_whitespace = false
 insert_final_newline = false
 
-[*.{json,yml}]
+[*.{json,md,yml}]
 indent_style = space

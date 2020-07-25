@@ -12,7 +12,7 @@ To reference the primary color for all `h2` elements you would write.
 
 ```css
 h2 {
-	color: tok(--primary);
+    color: tok(--primary);
 }
 ```
 
@@ -20,7 +20,7 @@ This equals the same as writing...
 
 ```css
 h2 {
-	color: var(--h2-color-primary, var(--color-primary, var(--color)));
+    color: var(--h2-color-primary, var(--color-primary, var(--color)));
 }
 ```
 
@@ -30,12 +30,12 @@ When a specific variant of a token is not available, it checks for the next avai
 
 ```css
 :root {
-	--component-element-property-keyword: value;
-	--component-property-keyword: value;
-	--element-property-keyword: value;
-	--property-variant-keyword: value;
-	--property-keyword: value;
-	--property: value;
+    --component-element-property-keyword: value;
+    --component-property-keyword: value;
+    --element-property-keyword: value;
+    --property-variant-keyword: value;
+    --property-keyword: value;
+    --property: value;
 }
 ```
 
@@ -45,7 +45,7 @@ When a specific variant of a token is not available, it checks for the next avai
 
 ```css
 .default {
-	border: tok();
+    border: tok();
 }
 ```
 
@@ -54,7 +54,7 @@ Becomes
 ```css
 /* e.g. --border: 1px solid red; */
 .default {
-	border: var(--border);
+    border: var(--border);
 }
 ```
 
@@ -62,7 +62,7 @@ Becomes
 
 ```css
 .keyword {
-	color: tok(--primary);
+    color: tok(--primary);
 }
 ```
 
@@ -72,7 +72,7 @@ Becomes
 /* e.g. --color-primary: red;
         --color: black; */
 .keyword {
-	color: var(--color-primary, var(--color));
+    color: var(--color-primary, var(--color));
 }
 ```
 
@@ -80,7 +80,7 @@ Becomes
 
 ```css
 h2 {
-	font-size: tok();
+    font-size: tok();
 }
 ```
 
@@ -90,7 +90,7 @@ Becomes
 /* e.g. --h2-font-size: 2.5em;
         --font-size: 1em; */
 h2 {
-	font-size: var(--h2-font-size, var(--font-size));
+    font-size: var(--h2-font-size, var(--font-size));
 }
 ```
 
@@ -100,7 +100,7 @@ Indicate a component using either of the following formats `.Component`, `Compon
 
 ```css
 .Component {
-	color: tok(--primary);
+    color: tok(--primary);
 }
 ```
 
@@ -111,7 +111,7 @@ Becomes
         --color-primary: blue;
         --color: black; */
 .Component {
-	color: var(--component-color-primary, var(--color-primary, var(--color)));
+    color: var(--component-color-primary, var(--color-primary, var(--color)));
 }
 ```
 
@@ -121,7 +121,7 @@ Some properties can include variants. For example margin and padding include var
 
 ```css
 .variants {
-	padding: tok(--small);
+    padding: tok(--small);
 }
 ```
 
@@ -132,10 +132,10 @@ Becomes
         --padding-inline-small: 0.5em;
         --padding-small: 1em; */
 .variants  {
-	padding: var(--padding-block-small, var(--padding-small, var(--padding)))
-		var(--padding-inline-small, var(--padding-small, var(--padding)))
-		var(--padding-block-small, var(--padding-small, var(--padding)))
-		var(--padding-inline-small, var(--padding-small, var(--padding)));
+    padding: var(--padding-block-small, var(--padding-small, var(--padding)))
+        var(--padding-inline-small, var(--padding-small, var(--padding)))
+        var(--padding-block-small, var(--padding-small, var(--padding)))
+        var(--padding-inline-small, var(--padding-small, var(--padding)));
 }
 ```
 
@@ -163,7 +163,7 @@ const postcss = require('postcss');
 const postcssMagicToken = require('postcss-magic-token');
 
 postcss([
-	postcssMagicToken(/* pluginOptions */)
+    postcssMagicToken(/* pluginOptions */)
 ]).process(YOUR_CSS /*, processOptions */);
 ```
 
