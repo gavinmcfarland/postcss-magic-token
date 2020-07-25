@@ -133,9 +133,9 @@ Becomes
         --padding-small: 1em; */
 .variants  {
 	padding: var(--padding-block-small, var(--padding-small, var(--padding)))
-			 var(--padding-inline-small, var(--padding-small, var(--padding)))
-			 var(--padding-block-small, var(--padding-small, var(--padding)))
-			 var(--padding-inline-small, var(--padding-small, var(--padding)));
+		var(--padding-inline-small, var(--padding-small, var(--padding)))
+		var(--padding-block-small, var(--padding-small, var(--padding)))
+		var(--padding-inline-small, var(--padding-small, var(--padding)));
 }
 ```
 
